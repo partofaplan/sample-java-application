@@ -56,7 +56,8 @@ jobs:
             --build-arg BASE_IMAGE="${BASE_IMAGE}" \
             --build-arg WDT_VERSION="${WDT_VERSION}" \
             -t "${IMAGE_NAME}" \
-            weblogic/image
+            -f weblogic/image/Dockerfile \
+            weblogic
 
       - name: Log in to target registry
         run: |
