@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>sample-java-application</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>sample-ear</artifactId>
+  <packaging>ear</packaging>
+  <name>Sample EAR Module</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>sample-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>sample-ear</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <displayName>Sample EAR Application</displayName>
+          <modules>
+            <webModule>
+              <groupId>com.example</groupId>
+              <artifactId>sample-web</artifactId>
+              <contextRoot>/</contextRoot>
+            </webModule>
+          </modules>
+          <defaultLibBundleDir>lib</defaultLibBundleDir>
+          <generateApplicationXml>true</generateApplicationXml>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

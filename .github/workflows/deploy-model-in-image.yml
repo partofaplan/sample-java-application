@@ -1,0 +1,79 @@
+name: Deploy to WebLogic with Model in Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy-tag:
+        description: Optional image tag suffix (defaults to the commit SHA)
+        required: false
+
+env:
+  BASE_IMAGE: ${{ secrets.BASE_IMAGE != '' && secrets.BASE_IMAGE || 'container-registry.oracle.com/middleware/weblogic:12.2.1.4' }}
+  WDT_VERSION: ${{ secrets.WDT_VERSION != '' && secrets.WDT_VERSION || '1.10.0' }}
+  REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
+  REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+  IMAGE_PULL_SECRET_NAME: ${{ secrets.IMAGE_PULL_SECRET_NAME != '' && secrets.IMAGE_PULL_SECRET_NAME || 'sample-domain-registry' }}
+  OCR_USERNAME: ${{ secrets.OCR_USERNAME }}
+  OCR_PASSWORD: ${{ secrets.OCR_PASSWORD }}
+  WEBLOGIC_USERNAME: ${{ secrets.WEBLOGIC_USERNAME }}
+  WEBLOGIC_PASSWORD: ${{ secrets.WEBLOGIC_PASSWORD }}
+  RUNTIME_ENCRYPTION_PASSWORD: ${{ secrets.RUNTIME_ENCRYPTION_PASSWORD }}
+  KUBECONFIG_BASE64: ${{ secrets.KUBECONFIG_BASE64 }}
+
+jobs:
+  deploy:
+    name: Build and Deploy Model in Image
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
+      IMAGE_NAME: ${{ secrets.REGISTRY_URL }}/sample-domain:${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: maven
+
+      - name: Build EAR artifact
+        run: mvn -B package
+
+      - name: Prepare WDT archive
+        run: weblogic/scripts/prepare-wdt-artifacts.sh
+
+      - name: Log in to Oracle Container Registry
+        if: ${{ env.OCR_USERNAME != '' && env.OCR_PASSWORD != '' }}
+        run: |
+          echo "${OCR_PASSWORD}" | docker login container-registry.oracle.com -u "${OCR_USERNAME}" --password-stdin
+
+      - name: Build model image
+        run: |
+          docker build \
+            --build-arg BASE_IMAGE="${BASE_IMAGE}" \
+            --build-arg WDT_VERSION="${WDT_VERSION}" \
+            -t "${IMAGE_NAME}" \
+            weblogic/image
+
+      - name: Log in to target registry
+        run: |
+          if [[ -z "${REGISTRY_URL}" || -z "${REGISTRY_USERNAME}" || -z "${REGISTRY_PASSWORD}" ]]; then
+            echo "REGISTRY_URL, REGISTRY_USERNAME, and REGISTRY_PASSWORD secrets are all required." >&2
+            exit 1
+          fi
+          echo "${REGISTRY_PASSWORD}" | docker login "${REGISTRY_URL}" -u "${REGISTRY_USERNAME}" --password-stdin
+
+      - name: Push model image
+        run: docker push "${IMAGE_NAME}"
+
+      - name: Deploy WebLogic Domain
+        run: weblogic/scripts/deploy-domain.sh
+        env:
+          IMAGE: ${{ env.IMAGE_NAME }}
+          IMAGE_PULL_SECRET_NAME: ${{ env.IMAGE_PULL_SECRET_NAME }}
+          IMAGE_PULL_SECRET_SERVER: ${{ env.REGISTRY_URL }}
+          IMAGE_PULL_SECRET_USERNAME: ${{ env.REGISTRY_USERNAME }}
+          IMAGE_PULL_SECRET_PASSWORD: ${{ env.REGISTRY_PASSWORD }}
