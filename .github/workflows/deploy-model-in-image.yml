@@ -9,8 +9,7 @@ on:
       runner-label:
         description: Self-hosted runner label to target (local or alpha)
         required: true
-        default: local
-
+        default: self-hosted
 env:
   BASE_IMAGE: ${{ secrets.BASE_IMAGE != '' && secrets.BASE_IMAGE || 'partofaplan/weblogic-base:latest' }}
   WDT_VERSION: ${{ secrets.WDT_VERSION != '' && secrets.WDT_VERSION || '1.10.0' }}
