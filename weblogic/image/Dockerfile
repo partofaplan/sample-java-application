@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=container-registry.oracle.com/middleware/weblogic:12.2.1.4
+ARG BASE_IMAGE=partofaplan/weblogic-base:latest
 FROM ${BASE_IMAGE}
 
 USER root

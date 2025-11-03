@@ -6,9 +6,13 @@ on:
       deploy-tag:
         description: Optional image tag suffix (defaults to the commit SHA)
         required: false
+      runner-label:
+        description: Self-hosted runner label to target (local or alpha)
+        required: true
+        default: local
 
 env:
-  BASE_IMAGE: ${{ secrets.BASE_IMAGE != '' && secrets.BASE_IMAGE || 'container-registry.oracle.com/middleware/weblogic:12.2.1.4' }}
+  BASE_IMAGE: ${{ secrets.BASE_IMAGE != '' && secrets.BASE_IMAGE || 'partofaplan/weblogic-base:latest' }}
   WDT_VERSION: ${{ secrets.WDT_VERSION != '' && secrets.WDT_VERSION || '1.10.0' }}
   REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
   REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
@@ -24,7 +28,7 @@ env:
 jobs:
   deploy:
     name: Build and Deploy Model in Image
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner-label == 'alpha' && fromJson('["self-hosted","alpha"]') || fromJson('["self-hosted","local"]') }}
     env:
       IMAGE_TAG: ${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
       IMAGE_NAME: ${{ secrets.REGISTRY_URL }}/sample-domain:${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
