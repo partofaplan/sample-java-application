@@ -7,7 +7,7 @@ on:
         description: Optional image tag suffix (defaults to the commit SHA)
         required: false
       runner-label:
-        description: Self-hosted runner label to target (local or alpha)
+        description: Self-hosted runner label to target (local or alpha cluster)
         required: true
         default: self-hosted
 env:
