@@ -20,6 +20,7 @@ mkdir -p "${APPLICATIONS_DIR}"
 
 cp "${EAR_PATH}" "${APPLICATIONS_DIR}/sample-ear.ear"
 
-(cd "${WORK_DIR}" && zip -r "../archive.zip" wlsdeploy >/dev/null)
+rm -f "${ARCHIVE_ROOT}/archive.zip"
+(cd "${WORK_DIR}" && jar -cf ../archive.zip wlsdeploy)
 
 echo "WDT archive created at ${ARCHIVE_ROOT}/archive.zip"
