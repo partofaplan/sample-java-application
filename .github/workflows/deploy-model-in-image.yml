@@ -30,7 +30,6 @@ jobs:
     runs-on: ${{ inputs.runner-label == 'alpha' && fromJson('["self-hosted","alpha"]') || fromJson('["self-hosted","local"]') }}
     env:
       IMAGE_TAG: ${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
-      IMAGE_NAME: ${{ secrets.REGISTRY_URL }}/sample-domain:${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,6 +46,19 @@ jobs:
 
       - name: Prepare WDT archive
         run: weblogic/scripts/prepare-wdt-artifacts.sh
+
+      - name: Configure image metadata
+        run: |
+          if [[ -z "${REGISTRY_URL}" ]]; then
+            echo "REGISTRY_URL secret must be set (e.g. ghcr.io/your-org)." >&2
+            exit 1
+          fi
+          IMAGE_NAME="${REGISTRY_URL%/}/sample-domain:${IMAGE_TAG}"
+          echo "Using image ${IMAGE_NAME}"
+          {
+            echo "IMAGE_NAME=${IMAGE_NAME}"
+            echo "IMAGE_REGISTRY_HOST=${REGISTRY_URL%/}"
+          } >> "${GITHUB_ENV}"
 
       - name: Log in to Oracle Container Registry
         if: ${{ env.OCR_USERNAME != '' && env.OCR_PASSWORD != '' }}
@@ -68,7 +80,7 @@ jobs:
             echo "REGISTRY_URL, REGISTRY_USERNAME, and REGISTRY_PASSWORD secrets are all required." >&2
             exit 1
           fi
-          echo "${REGISTRY_PASSWORD}" | docker login "${REGISTRY_URL}" -u "${REGISTRY_USERNAME}" --password-stdin
+          echo "${REGISTRY_PASSWORD}" | docker login "${IMAGE_REGISTRY_HOST}" -u "${REGISTRY_USERNAME}" --password-stdin
 
       - name: Push model image
         run: docker push "${IMAGE_NAME}"
@@ -78,6 +90,6 @@ jobs:
         env:
           IMAGE: ${{ env.IMAGE_NAME }}
           IMAGE_PULL_SECRET_NAME: ${{ env.IMAGE_PULL_SECRET_NAME }}
-          IMAGE_PULL_SECRET_SERVER: ${{ env.REGISTRY_URL }}
+          IMAGE_PULL_SECRET_SERVER: ${{ env.IMAGE_REGISTRY_HOST }}
           IMAGE_PULL_SECRET_USERNAME: ${{ env.REGISTRY_USERNAME }}
           IMAGE_PULL_SECRET_PASSWORD: ${{ env.REGISTRY_PASSWORD }}
