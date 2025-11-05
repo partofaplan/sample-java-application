@@ -1,4 +1,4 @@
-name: Deploy to WebLogic with Model in Image
+name: Deploy to WebLogic with Model in Image today
 
 on:
   workflow_dispatch:
