@@ -83,7 +83,10 @@ jobs:
           echo "${REGISTRY_PASSWORD}" | docker login "${IMAGE_REGISTRY_HOST}" -u "${REGISTRY_USERNAME}" --password-stdin
 
       - name: Push model image
-        run: docker push "${IMAGE_NAME}"
+        run: |
+          set -x
+          docker info
+          docker --debug push "${IMAGE_NAME}"
 
       - name: Deploy WebLogic Domain
         run: weblogic/scripts/deploy-domain.sh
