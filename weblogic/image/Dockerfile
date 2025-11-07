@@ -5,7 +5,8 @@ USER root
 
 ARG WDT_VERSION=1.10.0
 
-RUN microdnf install -y unzip curl && microdnf clean all
+# Increase timeout/retries to deal with transient Oracle yum outages in CI
+RUN microdnf --setopt=timeout=300 --setopt=retries=10 install -y unzip curl && microdnf clean all
 
 RUN mkdir -p /u01/wdt && \
     curl -fL "https://github.com/oracle/weblogic-deploy-tooling/releases/download/release-${WDT_VERSION}/weblogic-deploy.zip" -o /tmp/weblogic-deploy.zip && \
