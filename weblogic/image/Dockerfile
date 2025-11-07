@@ -3,7 +3,7 @@ FROM ${BASE_IMAGE}
 
 USER root
 
-ARG WDT_VERSION=1.10.0
+ARG WDT_VERSION=4.3.8
 
 # Bump DNF timeout/retries to make CI builds resilient to flaky Oracle yum mirrors
 RUN printf '\n# Added for CI builds\nretries=10\ntimeout=300\n' >> /etc/dnf/dnf.conf && \

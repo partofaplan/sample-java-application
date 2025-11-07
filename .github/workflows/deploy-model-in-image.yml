@@ -12,7 +12,7 @@ on:
         default: self-hosted
 env:
   BASE_IMAGE: ${{ secrets.BASE_IMAGE != '' && secrets.BASE_IMAGE || 'partofaplan/weblogic-base:latest' }}
-  WDT_VERSION: ${{ secrets.WDT_VERSION != '' && secrets.WDT_VERSION || '1.10.0' }}
+  WDT_VERSION: ${{ secrets.WDT_VERSION != '' && secrets.WDT_VERSION || '4.3.8' }}
   REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
   REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
