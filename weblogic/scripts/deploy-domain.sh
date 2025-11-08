@@ -7,6 +7,7 @@ set -o pipefail
 NAMESPACE="weblogic-sample"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DOMAIN_TEMPLATE="${ROOT_DIR}/weblogic/kubernetes/domain.yaml"
+CLUSTER_TEMPLATE="${ROOT_DIR}/weblogic/kubernetes/cluster-sample-domain.yaml"
 KUBE_DIR="${ROOT_DIR}/.kube"
 KUBECONFIG_FILE="${KUBE_DIR}/config"
 
@@ -39,6 +40,8 @@ else
 fi
 
 kubectl apply -f "${ROOT_DIR}/weblogic/kubernetes/namespace.yaml"
+
+kubectl apply -f "${CLUSTER_TEMPLATE}"
 
 kubectl -n "${NAMESPACE}" create secret generic weblogic-credentials \
   --from-literal=adminUserName="${WEBLOGIC_USERNAME}" \

@@ -23,8 +23,7 @@ spec:
         - channelName: default
           nodePort: 32001
   clusters:
-    - clusterName: cluster-1
-      replicas: 1
+    - name: sample-domain-cluster-1
   configuration:
     model:
       domainType: WLS
