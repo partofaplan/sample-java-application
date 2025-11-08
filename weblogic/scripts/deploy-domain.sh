@@ -62,6 +62,11 @@ kubectl -n "${NAMESPACE}" create secret docker-registry "${IMAGE_PULL_SECRET_NAM
 export IMAGE
 export IMAGE_PULL_SECRET_NAME
 
-envsubst < "${DOMAIN_TEMPLATE}" | kubectl apply -f -
+rendered_domain="$(mktemp)"
+trap 'rm -f "${rendered_domain}"' EXIT
+envsubst < "${DOMAIN_TEMPLATE}" > "${rendered_domain}"
+echo "Rendered Domain manifest:"
+cat "${rendered_domain}"
+kubectl apply -f "${rendered_domain}"
 
 echo "Model in Image deployment applied. Monitor the operator and pod logs to verify rollout."
