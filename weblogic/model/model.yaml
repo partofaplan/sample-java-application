@@ -12,7 +12,7 @@ topology:
         ServerNamePrefix: managed-server
         DynamicClusterSize: 1
         MaxDynamicClusterSize: 2
-        CalculatedListenPorts: true
+        CalculatedListenPorts: false
   ServerTemplate:
     cluster-1-template:
       ListenPort: 8001
