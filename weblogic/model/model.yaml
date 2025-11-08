@@ -18,7 +18,7 @@ topology:
       ListenPort: 8001
       SSL:
         Enabled: false
-  Servers:
+  Server:
     AdminServer:
       ListenPort: 7001
       SSL:
