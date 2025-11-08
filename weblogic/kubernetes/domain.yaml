@@ -12,7 +12,7 @@ spec:
   webLogicCredentialsSecret:
     name: weblogic-credentials
   includeServerOutInPodLog: true
-  serverStartPolicy: IF_NEEDED
+  serverStartPolicy: IfNeeded
   serverPod:
     env:
       - name: JAVA_OPTIONS
