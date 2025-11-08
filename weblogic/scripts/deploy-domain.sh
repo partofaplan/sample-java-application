@@ -44,6 +44,8 @@ kubectl apply -f "${ROOT_DIR}/weblogic/kubernetes/namespace.yaml"
 kubectl apply -f "${CLUSTER_TEMPLATE}"
 
 kubectl -n "${NAMESPACE}" create secret generic weblogic-credentials \
+  --from-literal=username="${WEBLOGIC_USERNAME}" \
+  --from-literal=password="${WEBLOGIC_PASSWORD}" \
   --from-literal=adminUserName="${WEBLOGIC_USERNAME}" \
   --from-literal=adminPassword="${WEBLOGIC_PASSWORD}" \
   --dry-run=client -o yaml | kubectl apply -f -
