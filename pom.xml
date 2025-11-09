@@ -12,6 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <nexus.baseUrl>http://nexus.local</nexus.baseUrl>
   </properties>
 
   <modules>
@@ -22,11 +23,11 @@
   <distributionManagement>
     <repository>
       <id>nexus-releases</id>
-      <url>http://nexus.local/repository/maven-releases/</url>
+      <url>${nexus.baseUrl}/repository/maven-releases/</url>
     </repository>
     <snapshotRepository>
       <id>nexus-snapshots</id>
-      <url>http://nexus.local/repository/maven-snapshots/</url>
+      <url>${nexus.baseUrl}/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 </project>

@@ -13,6 +13,7 @@ jobs:
     env:
       NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
       NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      NEXUS_BASE_URL: ${{ secrets.NEXUS_BASE_URL != '' && secrets.NEXUS_BASE_URL || 'http://nexus.nexus.svc.cluster.local:8081' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,7 +59,7 @@ jobs:
           PY
 
       - name: Build and deploy EAR to Nexus
-        run: mvn -B -pl sample-ear -am deploy
+        run: mvn -B -pl sample-ear -am deploy -Dnexus.baseUrl="${NEXUS_BASE_URL}"
 
       - name: Upload EAR artifact
         uses: actions/upload-artifact@v4
