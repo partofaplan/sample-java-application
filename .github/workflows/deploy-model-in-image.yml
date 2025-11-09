@@ -1,6 +1,10 @@
-name: Deploy to WebLogic with Model in Image today
+name: Build and Deploy Model in Image
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
   workflow_dispatch:
     inputs:
       deploy-tag:
@@ -25,11 +29,9 @@ env:
   KUBECONFIG_BASE64: ${{ secrets.KUBECONFIG_BASE64 }}
 
 jobs:
-  deploy:
-    name: Build and Deploy Model in Image
-    runs-on: ${{ inputs.runner-label == 'alpha' && fromJson('["self-hosted","alpha"]') || fromJson('["self-hosted","local"]') }}
-    env:
-      IMAGE_TAG: ${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
+  build:
+    name: Build artifacts
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,11 +43,34 @@ jobs:
           java-version: 11
           cache: maven
 
-      - name: Build EAR artifact
+      - name: Build with Maven
         run: mvn -B package
 
       - name: Prepare WDT archive
         run: weblogic/scripts/prepare-wdt-artifacts.sh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wdt-artifacts
+          path: |
+            sample-ear/target/sample-ear.ear
+            weblogic/model/archive.zip
+
+  deploy:
+    name: Build and deploy image
+    needs: build
+    runs-on: ${{ inputs.runner-label == 'alpha' && fromJson('["self-hosted","alpha"]') || fromJson('["self-hosted","local"]') }}
+    env:
+      IMAGE_TAG: ${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: wdt-artifacts
 
       - name: Configure image metadata
         run: |
