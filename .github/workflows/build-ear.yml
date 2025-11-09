@@ -31,24 +31,31 @@ jobs:
             exit 1
           fi
           mkdir -p "${HOME}/.m2"
-          cat <<EOF > "${HOME}/.m2/settings.xml"
+          python - <<'PY'
+import os
+from pathlib import Path
+from textwrap import dedent
+
+settings = dedent(f"""\
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
   <servers>
     <server>
       <id>nexus-releases</id>
-      <username>${NEXUS_USERNAME}</username>
-      <password>${NEXUS_PASSWORD}</password>
+      <username>{os.environ['NEXUS_USERNAME']}</username>
+      <password>{os.environ['NEXUS_PASSWORD']}</password>
     </server>
     <server>
       <id>nexus-snapshots</id>
-      <username>${NEXUS_USERNAME}</username>
-      <password>${NEXUS_PASSWORD}</password>
+      <username>{os.environ['NEXUS_USERNAME']}</username>
+      <password>{os.environ['NEXUS_PASSWORD']}</password>
     </server>
   </servers>
 </settings>
-EOF
+""")
+Path(os.path.expanduser("~/.m2/settings.xml")).write_text(settings, encoding="utf-8")
+PY
 
       - name: Build and deploy EAR to Nexus
         run: mvn -B -pl sample-ear -am deploy
