@@ -60,9 +60,9 @@ jobs:
   deploy:
     name: Build and deploy image
     needs: build
-    runs-on: ${{ inputs.runner-label == 'alpha' && fromJson('["self-hosted","alpha"]') || fromJson('["self-hosted","local"]') }}
+    runs-on: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.runner-label == 'alpha') && fromJson('["self-hosted","alpha"]') || fromJson('["self-hosted","local"]') }}
     env:
-      IMAGE_TAG: ${{ inputs.deploy-tag != '' && inputs.deploy-tag || github.sha }}
+      IMAGE_TAG: ${{ github.event.inputs.deploy-tag != '' && github.event.inputs.deploy-tag || github.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

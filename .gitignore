@@ -4,3 +4,8 @@ target/
 .DS_Store
 weblogic/model/archive.zip
 weblogic/model/wdt-archive/
+*.war
+kubeconfig-*
+logs_*.zip
+0_Build\ and\ Deploy\ Model\ in\ Image.txt
+Build\ and\ Deploy\ Model\ in\ Image/

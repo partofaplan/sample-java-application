@@ -1,4 +1,0 @@
-2025-11-07T14:23:57.6350000Z Job is about to start running on the runner: github-runner-778b96c6f5-pdvhk
-2025-11-07T14:23:57.6310000Z Requested labels: self-hosted, local
-2025-11-07T14:23:57.6310000Z Job defined at: partofaplan/sample-java-application/.github/workflows/deploy-model-in-image.yml@refs/heads/main
-2025-11-07T14:23:57.6310000Z Waiting for a runner to pick up this job...
