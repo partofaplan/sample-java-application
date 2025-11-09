@@ -2,8 +2,6 @@ target/
 */target/
 .idea/
 .DS_Store
-weblogic/model/archive.zip
-weblogic/model/wdt-archive/
 *.war
 kubeconfig-*
 logs_*.zip
