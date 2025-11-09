@@ -42,6 +42,7 @@ fi
 kubectl apply -f "${ROOT_DIR}/weblogic/kubernetes/namespace.yaml"
 
 kubectl apply -f "${CLUSTER_TEMPLATE}"
+kubectl apply -f "${ROOT_DIR}/weblogic/kubernetes/ingress.yaml"
 
 kubectl -n "${NAMESPACE}" create secret generic weblogic-credentials \
   --from-literal=username="${WEBLOGIC_USERNAME}" \
