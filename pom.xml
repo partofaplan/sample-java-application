@@ -18,4 +18,15 @@
     <module>sample-web</module>
     <module>sample-ear</module>
   </modules>
+
+  <distributionManagement>
+    <repository>
+      <id>nexus-releases</id>
+      <url>http://nexus.local/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>http://nexus.local/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
