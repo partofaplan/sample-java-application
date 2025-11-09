@@ -31,7 +31,7 @@ jobs:
             exit 1
           fi
           mkdir -p "${HOME}/.m2"
-          python - <<'PY'
+          python3 - <<'PY'
 import os
 from pathlib import Path
 from textwrap import dedent
